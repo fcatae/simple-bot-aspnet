@@ -26,14 +26,18 @@ namespace SimpleBot
         async Task HandleActivityAsync(Activity activity)
         {
             string text = activity.Text;
+            string userFromId = activity.From.Id;
+            string userFromName = activity.From.Name;
+            string userRecipientId = activity.Recipient.Id;
+            string userRecipientName = activity.Recipient.Name;
 
-            await ReplyUserAsync(activity, text);
+            await ReplyUserAsync(activity, "Resposta: " + text);
         }
 
         async Task ReplyUserAsync(Activity message, string text)
         {
             var connector = new ConnectorClient(new Uri(message.ServiceUrl));
-            var reply = message.CreateReply("Resposta: " + text);
+            var reply = message.CreateReply(text);
 
             await connector.Conversations.ReplyToActivityAsync(reply);
         }
