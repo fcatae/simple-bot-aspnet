@@ -6,37 +6,41 @@ using Microsoft.Bot.Builder.Azure;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Internals;
 using Microsoft.Bot.Connector;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace SimpleBot
 {
     public class WebApiApplication : System.Web.HttpApplication
     {
         protected void Application_Start()
+        {            
+            GlobalConfiguration.Configure(Register);
+        }
+
+        static void Register(HttpConfiguration config)
         {
-            // Bot Storage: This is a great spot to register the private state storage for your bot. 
-            // We provide adapters for Azure Table, CosmosDb, SQL Azure, or you can implement your own!
-            // For samples and documentation, see: https://github.com/Microsoft/BotBuilder-Azure
+            // Json settings
+            config.Formatters.JsonFormatter.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            config.Formatters.JsonFormatter.SerializerSettings.Formatting = Formatting.Indented;
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings()
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Newtonsoft.Json.Formatting.Indented,
+                NullValueHandling = NullValueHandling.Ignore,
+            };
 
-            Conversation.UpdateContainer(
-                builder =>
-                {
-                    builder.RegisterModule(new AzureModule(Assembly.GetExecutingAssembly()));
+            // Web API configuration and services
 
-                    // Using Azure Table Storage
-                    // var store = new TableBotDataStore(ConfigurationManager.AppSettings["AzureWebJobsStorage"]); // requires Microsoft.BotBuilder.Azure Nuget package 
+            // Web API routes
+            config.MapHttpAttributeRoutes();
 
-                    // To use CosmosDb or InMemory storage instead of the default table storage, uncomment the corresponding line below
-                    // var store = new DocumentDbBotDataStore("cosmos db uri", "cosmos db key"); // requires Microsoft.BotBuilder.Azure Nuget package 
-
-                    var store = new InMemoryDataStore(); // volatile in-memory store
-
-                    builder.Register(c => store)
-                        .Keyed<IBotDataStore<BotData>>(AzureModule.Key_DataStore)
-                        .AsSelf()
-                        .SingleInstance();
-
-                });
-            GlobalConfiguration.Configure(WebApiConfig.Register);
+            config.Routes.MapHttpRoute(
+                name: "DefaultApi",
+                routeTemplate: "api/{controller}/{id}",
+                defaults: new { id = RouteParameter.Optional }
+            );
         }
     }
 }
