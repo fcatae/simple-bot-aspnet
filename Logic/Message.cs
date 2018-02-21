@@ -7,14 +7,14 @@ namespace SimpleBot
 {
     public class Message
     {
-        public string From { get; }
-        public string To { get; }
+        public string Id { get; }
+        public string User { get; }
         public string Text { get; }
 
-        public Message(string from, string to, string text)
+        public Message(string id, string username, string text)
         {
-            this.From = from;
-            this.To = to;
+            this.Id = id;
+            this.User = username;
             this.Text = text;
         }
     }

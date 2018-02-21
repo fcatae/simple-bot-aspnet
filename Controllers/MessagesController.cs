@@ -29,10 +29,8 @@ namespace SimpleBot
             string text = activity.Text;
             string userFromId = activity.From.Id;
             string userFromName = activity.From.Name;
-            string userRecipientId = activity.Recipient.Id;
-            string userRecipientName = activity.Recipient.Name;
 
-            var message = new Message(userFromName, userRecipientName, text);
+            var message = new Message(userFromId, userFromName, text);
 
             string response = SimpleBotUser.Reply(message);
 

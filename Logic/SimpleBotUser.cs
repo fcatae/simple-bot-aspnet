@@ -9,7 +9,7 @@ namespace SimpleBot
     {
         public static string Reply(Message message)
         {
-            return $"{message.From} disse '{message.Text}'";
+            return $"{message.User} disse '{message.Text}'";
         }
     }
 }
