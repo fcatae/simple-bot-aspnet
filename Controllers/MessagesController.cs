@@ -23,6 +23,7 @@ namespace SimpleBot
             return new HttpResponseMessage(HttpStatusCode.Accepted);
         }
 
+        // Estabelece comunicação entre o usuário e o SimpleBotUser
         async Task HandleActivityAsync(Activity activity)
         {
             string text = activity.Text;
@@ -31,9 +32,14 @@ namespace SimpleBot
             string userRecipientId = activity.Recipient.Id;
             string userRecipientName = activity.Recipient.Name;
 
-            await ReplyUserAsync(activity, "Resposta: " + text);
+            var message = new Message(userFromName, userRecipientName, text);
+
+            string response = SimpleBotUser.Reply(message);
+
+            await ReplyUserAsync(activity, response);
         }
 
+        // Responde mensagens usando o Bot Framework Connector
         async Task ReplyUserAsync(Activity message, string text)
         {
             var connector = new ConnectorClient(new Uri(message.ServiceUrl));
