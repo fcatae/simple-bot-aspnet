@@ -1,7 +1,4 @@
 using System.Web.Http;
-using System.Configuration;
-using System.Reflection;
-using Microsoft.Bot.Connector;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
